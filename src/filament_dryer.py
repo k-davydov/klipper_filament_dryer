@@ -184,16 +184,18 @@ class filament_dryer:
         self.gcode.run_script_from_command("SET_HEATER_TEMPERATURE HEATER=%s TARGET=0" % (self.heater_name))
 
     def get_status(self, eventtime):
-        seconds = self.dry_target_time - self.printer.get_reactor().monotonic()
-        if self.dry_mode == "Off":
-            seconds = 0
-        mm, ss = divmod(seconds, 60)
-        hh, mm = divmod(mm, 60)
-        return {
-            'name': self.name,
-            'config': "{'target_humidity': '%f', 'interval': '%i'}" % (self.target_humidity, self.interval),
-            'info': "{'humidity': '%i', 'temperature': '%i', 'dry_mode': '%s', 'dry_time': '%i:%02i:%02i'}" % (self.sensor.humidity, self.sensor.temp, self.dry_mode, hh, mm, ss)
-        }
+        try:
+            seconds = self.dry_target_time - self.printer.get_reactor().monotonic()
+            if self.dry_mode == "Off":
+                seconds = 0
+            mm, ss = divmod(seconds, 60)
+            hh, mm = divmod(mm, 60)
+            return {
+                'name': self.name,
+                'config': "{'target_humidity': '%f', 'interval': '%i'}" % (self.target_humidity, self.interval),
+                'info': "{'humidity': '%i', 'temperature': '%i', 'dry_mode': '%s', 'dry_time': '%i:%02i:%02i'}" % (self>            }
+        except Exception:
+            return { }
 
 def load_config_prefix(config):
     return filament_dryer(config)
